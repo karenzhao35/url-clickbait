@@ -53,7 +53,7 @@ func Save(key string, oldUrl string, expiry int) error {
 	defer conn.Close(context.Background())
 
 	createdAt := time.Now()
-	expiredAt := createdAt.Add(time.Duration(expiry) * time.Minute)
+	expiredAt := createdAt.Add(time.Duration(expiry) * time.Hour * 24)
 
 	_, err = conn.Exec(context.Background(), `INSERT INTO urls ("old_url", "new_url", "created_at", "expires_at") VALUES ($1, $2, $3, $4)`,
 		oldUrl, key, createdAt, expiredAt)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"net/http"
 
 	"github.com/karenzhao35/shrimpy/internal/handlers"
@@ -18,6 +19,15 @@ func main() {
 		log.Printf("Warning: .env file not found: %v", err)
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	allowed := os.Getenv("ALLOWED_ORIGIN")
+
+
+
 	if err := storage.TestDB(); err != nil {
 		fmt.Printf("Database test failed: %v\n", err)
 	}
@@ -28,7 +38,7 @@ func main() {
 	// Add CORS middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+			w.Header().Set("Access-Control-Allow-Origin", allowed)
 			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
@@ -50,7 +60,7 @@ func main() {
 		}
 	})
 	r.Mount("/", urlRoutes())
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":"+port, r)
 }
 
 func urlRoutes() chi.Router {
