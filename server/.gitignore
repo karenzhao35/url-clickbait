@@ -1,0 +1,38 @@
+# Environment variables (KEEP THESE OUT OF GIT)
+.env
+.env.local
+.env.production
+
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file (optional)
+go.work
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# NOTE: go.mod and go.sum should be committed to git
+# They are essential for dependency management
