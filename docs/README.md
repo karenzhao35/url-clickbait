@@ -6,7 +6,7 @@ A satirical URL shortener that transforms boring links into clickable tech buzzw
 
 This project is a full-stack web application that turns URLs to over-the-top tech industry buzzwords.
 
-**Live Demo**: `https://url-clickbait.onrender.com` → redirects to your boring corporate website
+**Live at**: `https://url-clickbait.onrender.com` 
 
 ## Features
 
@@ -14,6 +14,7 @@ This project is a full-stack web application that turns URLs to over-the-top tec
 - Tech bro branding: Transforms mundane links into clickbait
 - Expriation: Configurable URL lifespans
 - Database persistence: PostgreSQL storage 
+- CI/CD with Github Actions for automated deployment
 
 ## Technical Stack
 
