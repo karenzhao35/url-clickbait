@@ -50,6 +50,8 @@ func GetOriginalUrl(key string) (string, error) {
 	}
 	defer conn.Close(context.Background())
 
+	_, _ = conn.Exec(context.Background(), "DELETE FROM urls WHERE expires_at <= NOW()")
+
 	var originalUrl string
 	var expiresAt time.Time
 	query := "SELECT old_url, expires_at FROM urls WHERE new_url = $1"
@@ -62,10 +64,6 @@ func GetOriginalUrl(key string) (string, error) {
 	}
 
 	if time.Now().After(expiresAt) {
-		_, deleteErr := conn.Exec(context.Background(), "DELETE FROM urls WHERE new_url = $1", key)
-		if deleteErr != nil {
-			log.Printf("Failed to delete expired URL %s: %v", key, deleteErr)
-		}
 		return "", errors.New("url has expired")
 	}
 
