@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"os"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -41,7 +42,7 @@ func (h UrlHandler) CreateUrl(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	response := map[string]string{"short_url": "http://localhost:3000/make-money-fast/" + key}
+	response := map[string]string{"short_url": os.Getenv("BASE_URL") + "/make-money-fast/" + key}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
