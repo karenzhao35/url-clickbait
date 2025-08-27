@@ -8,10 +8,6 @@ This project is a full-stack web application that turns URLs to over-the-top tec
 
 **Live Demo**: `https://url-clickbait.onrender.com` → redirects to your boring corporate website
 
-## Deployment status
-[![Deploy Backend](https://github.com/yourusername/shrimpy/actions/workflows/deploy-backend.yml/badge.svg)](https://github.com/yourusername/shrimpy/actions/workflows/deploy-backend.yml)
-[![Deploy Frontend](https://github.com/yourusername/shrimpy/actions/workflows/deploy-frontend.yml/badge.svg)](https://github.com/yourusername/shrimpy/actions/workflows/deploy-frontend.yml)
-
 ## Features
 
 - Unique URLs: Generate unique short codes with cryptographically secure randomization
