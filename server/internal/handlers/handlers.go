@@ -47,7 +47,6 @@ func (h UrlHandler) CreateUrl(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h UrlHandler) GetUrl(w http.ResponseWriter, r *http.Request) {}
 func (h UrlHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	key := chi.URLParam(r, "key")
 
