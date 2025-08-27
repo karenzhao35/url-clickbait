@@ -63,4 +63,3 @@ CREATE TABLE urls (
 ### API Endpoints
 - `POST /shorten` - Create shortened URL with expiration
 - `GET /make-money-fast/{key}` - Redirect to original URL
-- `GET /preview/{key}` - Preview URL details without redirect
