@@ -24,27 +24,6 @@ func connect() (*pgx.Conn, error) {
 	return conn, nil
 }
 
-func queryData(conn *pgx.Conn) {
-	rows, err := conn.Query(context.Background(), "SELECT * FROM urls")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var id int
-		var oldUrl string
-		var newUrl string
-		var createdAt time.Time
-		var expiresAt time.Time
-		err := rows.Scan(&id, &oldUrl, &newUrl, &createdAt, &expiresAt)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("ID: %d, Old URL: %s, New URL: %s, Created At: %s, Expires At: %s\n", id, oldUrl, newUrl, createdAt, expiresAt)
-	}
-}
-
 func Save(key string, oldUrl string, expiry int) error {
 	conn, err := connect()
 	if err != nil {
@@ -72,8 +51,9 @@ func GetOriginalUrl(key string) (string, error) {
 	defer conn.Close(context.Background())
 
 	var originalUrl string
-	query := "SELECT old_url FROM urls WHERE new_url = $1"
-	err = conn.QueryRow(context.Background(), query, key).Scan(&originalUrl)
+	var expiresAt time.Time
+	query := "SELECT old_url, expires_at FROM urls WHERE new_url = $1"
+	err = conn.QueryRow(context.Background(), query, key).Scan(&originalUrl, &expiresAt)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return "", errors.New("url not found")
@@ -81,52 +61,13 @@ func GetOriginalUrl(key string) (string, error) {
 		return "", fmt.Errorf("failed to query url: %w", err)
 	}
 
-	return originalUrl, nil
-}
-
-// TestDB tests the database connection and queries
-func TestDB() error {
-	conn, err := connect()
-	if err != nil {
-		return fmt.Errorf("failed to connect to database: %v", err)
-	}
-	defer conn.Close(context.Background())
-
-	fmt.Println("Successfully connected to database!")
-
-	// Check table structure
-	if err := TestTableStructure(); err != nil {
-		fmt.Printf("Error checking table structure: %v\n", err)
-	}
-
-	queryData(conn)
-	return nil
-}
-
-// TestTableStructure tests what columns exist in the urls table
-func TestTableStructure() error {
-	conn, err := connect()
-	if err != nil {
-		return err
-	}
-	defer conn.Close(context.Background())
-
-	// Query to see actual column names
-	rows, err := conn.Query(context.Background(), "SELECT column_name FROM information_schema.columns WHERE table_name = 'urls'")
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	fmt.Println("Columns in 'urls' table:")
-	for rows.Next() {
-		var columnName string
-		err := rows.Scan(&columnName)
-		if err != nil {
-			return err
+	if time.Now().After(expiresAt) {
+		_, deleteErr := conn.Exec(context.Background(), "DELETE FROM urls WHERE new_url = $1", key)
+		if deleteErr != nil {
+			log.Printf("Failed to delete expired URL %s: %v", key, deleteErr)
 		}
-		fmt.Printf("- %s\n", columnName)
+		return "", errors.New("url has expired")
 	}
 
-	return nil
+	return originalUrl, nil
 }
